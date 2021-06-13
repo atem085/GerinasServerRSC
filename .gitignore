@@ -1,0 +1,26 @@
+# glob - означает, что далее будут описания файлов и папок с масками используемыми в операционных системах ("*", "?")
+syntax: glob
+bak
+classes
+src/jxl
+scan/
+src/main
+target
+icons
+RSCDoc
+*RSCClientData*
+*.iml
+.hg
+.idea
+*jar*
+*rar
+*lnk
+*exe
+*dat
+*html
+*xls
+*jpx*
+*java~*
+*class
+*db
+.editorconfig
