@@ -58,6 +58,7 @@ public class StayExample implements TableElementExample
       st.onlineBookingNo = in.readLong();
       st.color = in.readUTF().toCharArray();
       st.log = in.readUTF().toCharArray();
+      st.userId = in.readUTF().toCharArray();
       return st;
     }
     catch (Exception e)
@@ -115,7 +116,7 @@ public class StayExample implements TableElementExample
 
   public Class[] getColumnClasses(int howToRead)
   {
-    Class[] c = new Class[45];
+    Class[] c = new Class[46];
     c[0] = String.class;
     c[1] = String.class;
     c[2] = String.class;
@@ -161,6 +162,7 @@ public class StayExample implements TableElementExample
     c[42] = Long.class;
     c[43] = String.class;
     c[44] = String.class;
+    c[45] = String.class;
     return c;
   }
 

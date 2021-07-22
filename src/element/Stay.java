@@ -34,6 +34,7 @@ public class Stay implements TableElement
   protected long onlineBookingNo;
   protected char[] color = new char[0];
   protected char[] log = new char[0];
+  protected char[] userId = new char[0];
 
   //new instance
   public Stay(String checkinDate, String checkoutDate, long roomCode, long payerCode, long guestCode, int guestAmount, boolean breakfast, String note, double price, long bookingCode, long paymentCode, String color)
@@ -173,6 +174,8 @@ public class Stay implements TableElement
       case 42: return new Long(this.onlineBookingNo);
       case 43: return new String(this.color);
       case 44: return new String(this.log);
+      case 45:
+        return new String(this.userId);
       default: return new Long(this.code);
     }
   }
@@ -442,6 +445,10 @@ public class Stay implements TableElement
           this.color = value.toString().toCharArray();
           this.log = (currentLog + Consts.clStay("de")[column] + " bearbeitet [" + this.getValue(column, 1).toString() + "]\n").toCharArray();
           break;
+        case 45:
+          this.userId = value.toString().toCharArray();
+          this.log = (currentLog + Consts.clStay("de")[column] + " bearbeitet [" + this.getValue(column, 1).toString() + "]\n").toCharArray();
+          break;
       }
     }
     return "";
@@ -450,7 +457,7 @@ public class Stay implements TableElement
   public String toString(int howToRead)
   {
     String s = "";
-    for(int i = 0; i < 45; i++)
+    for(int i = 0; i < 46; i++)
       s += this.getValue(i, howToRead) + "\t";
     return s;
   }
@@ -555,6 +562,7 @@ public class Stay implements TableElement
         case 35:
         case 38:
         case 43:
+        case 45:
           return true;
         default:
           return false;
@@ -647,6 +655,7 @@ public class Stay implements TableElement
       out.writeLong(this.onlineBookingNo);
       out.writeUTF(new String(this.color));
       out.writeUTF(new String(this.log));
+      out.writeUTF(new String(this.userId));
   }
 
   public TableElement duplicate()
@@ -664,6 +673,7 @@ public class Stay implements TableElement
     st.guest3 = this.guest3;
     st.combine = this.combine;
     st.color = this.color.clone();
+    st.userId = this.userId.clone();
 //    st.invoiceNo2 = this.invoiceNo2;
 //    st.invoiceNo3 = this.invoiceNo3;
     return st;
