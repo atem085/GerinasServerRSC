@@ -719,6 +719,8 @@ public class Stay implements TableElement
             System.out.println("Send command to update");
             Data.commander.announce(command, "", "", "en", false, tbStay, null, null, Consts.tbStay);
           }
+          System.out.println("Set Benutzer group");
+          Loxone.setGroup(newUserId, "Benutzer");
         }
         catch (Exception e)
         {
