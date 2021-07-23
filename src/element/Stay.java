@@ -1,13 +1,8 @@
 package element;
 
 import data.Data;
-import table.Table;
-import table.TableElement;
-import table.User;
-import utils.Consts;
-import utils.DateRepresentation;
-import utils.MyException;
-import utils.MyObjectOutputStream;
+import table.*;
+import utils.*;
 
 public class Stay implements TableElement
 {
@@ -703,8 +698,45 @@ public class Stay implements TableElement
               this.getValue(1, 1).toString() + ", " + this.getValue(0, 4).toString() + ", " + this.getValue(8, 1).toString() + ", " +
               this.getValue(11, 1).toString() + ", " + this.guestAmount + ", " + this.breakfast + ", " + new String(this.note) + "; " + this.price + "; " +
               this.getValue(24, 1).toString() + ", " + this.getValue(25, 1).toString() + "; " + this.getValue(43, 1).toString() + "]\n").toCharArray();
+
+      new Thread(() -> {
+        try
+        {
+          Thread.sleep(1000);
+          while (!Data.canBeRunning)
+          {
+            Thread.sleep(100);
+          }
+          System.out.println("Create user in Loxone");
+          String newUserId = Loxone.createUser(getLoxoneUserName());
+          Table tbStay = Data.db.getTable(Consts.tbStay);
+          tbStay.setValueAt(newUserId, this.getCode(), 45, "en", "", date);
+          System.out.println("Update userId in Stay");
+          if (tbStay.lastOperationResult)
+          {
+            Data.version++;
+            Command command = new Command9(Consts.tbStay, this.getCode(), 45, newUserId, "", date, Data.version);
+            System.out.println("Send command to update");
+            Data.commander.announce(command, "", "", "en", false, tbStay, null, null, Consts.tbStay);
+          }
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+      }).start();
     }
+
+
     return "";
+  }
+
+  private String getLoxoneUserName()
+  {
+    return this.getCode() + "_"
+        + this.room.getValue(2, 1) + "_"
+        + this.payer.getValue(1, 1) + "_"
+        + this.payer.getValue(2, 1);
   }
 
   public String wasRemoved(int howToRead, TableElement parentElement, String currentUser, DateRepresentation date)
@@ -713,6 +745,18 @@ public class Stay implements TableElement
     {
       Data.db.getTable(Consts.tbDraftBooking).addTableElementSimple(this);
       this.log = "".toCharArray();
+      if (this.userId.length > 0)
+        new Thread(() -> {
+          try
+          {
+            System.out.println("Delete user from Loxone");
+            Loxone.deleteUser(String.valueOf(this.userId));
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }).start();
     }
     return "";
   }
