@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -79,6 +80,31 @@ public class Loxone
       throw new Exception("Cannot set group - error code " + simpleAnswer.simpleResult.code);
   }
 
+  public static void setValidDate(String userName, String userUUID, DateRepresentation dateFrom, DateRepresentation dateUntil) throws Exception
+  {
+    DateRepresentation date2009 = new DateRepresentation(1, 1, 2009);
+    date2009.setTime(0, 0);
+    long validFrom = (dateFrom.getTimeInMillis() - date2009.getTimeInMillis()) / 1000;
+    long validUntil = (dateUntil.getTimeInMillis() - date2009.getTimeInMillis()) / 1000;
+    String paramString = "{\"name\":\"" + userName + "\",\"userid\":\"" + userName + "\",\"uuid\":\"" + userUUID
+        + "\",\"userState\":4,\"validUntil\":" + validUntil + ",\"validFrom\":" + validFrom + "}";
+    URL url = new URL(loxoneHost + "addoredituser/" + paramString);
+    InputStream responseStream = getConnectionResponse(url);
+    ObjectMapper mapper = new ObjectMapper();
+    SimpleAnswer simpleAnswer = mapper.readValue(responseStream, SimpleAnswer.class);
+    if (!simpleAnswer.simpleResult.code.equalsIgnoreCase("200"))
+      throw new Exception("Cannot set valid date for user - error code " + simpleAnswer.simpleResult.code);
+  }
+
+  public static void updateUserAccessCode(String userUUID, String newAccessCode) throws Exception
+  {
+    URL url = new URL(loxoneHost + "updateuseraccesscode/" + userUUID + "/" + newAccessCode);
+    InputStream responseStream = getConnectionResponse(url);
+    ObjectMapper mapper = new ObjectMapper();
+    SimpleAnswer simpleAnswer = mapper.readValue(responseStream, SimpleAnswer.class);
+    if (!simpleAnswer.simpleResult.code.equalsIgnoreCase("200"))
+      throw new Exception("Cannot update access code - error code " + simpleAnswer.simpleResult.code);
+  }
 
   private static class SimpleAnswer
   {

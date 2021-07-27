@@ -4,6 +4,8 @@ import data.Data;
 import table.*;
 import utils.*;
 
+import java.util.Random;
+
 public class Stay implements TableElement
 {
   private long code;
@@ -708,19 +710,39 @@ public class Stay implements TableElement
             Thread.sleep(100);
           }
           System.out.println("Create user in Loxone");
-          String newUserId = Loxone.createUser(getLoxoneUserName());
+          String newUserUUID = Loxone.createUser("" + this.getCode());
           Table tbStay = Data.db.getTable(Consts.tbStay);
-          tbStay.setValueAt(newUserId, this.getCode(), 45, "en", "", date);
+          tbStay.setValueAt(newUserUUID, this.getCode(), 45, "en", "", date);
           System.out.println("Update userId in Stay");
           if (tbStay.lastOperationResult)
           {
             Data.version++;
-            Command command = new Command9(Consts.tbStay, this.getCode(), 45, newUserId, "", date, Data.version);
+            Command command = new Command9(Consts.tbStay, this.getCode(), 45, newUserUUID, "", date, Data.version);
             System.out.println("Send command to update");
             Data.commander.announce(command, "", "", "en", false, tbStay, null, null, Consts.tbStay);
           }
           System.out.println("Set Benutzer group");
-          Loxone.setGroup(newUserId, "Benutzer");
+          Loxone.setGroup(newUserUUID, "Benutzer_NFC" + this.room.getValue(0, 1).toString());
+          System.out.println("Set valid date");
+          DateRepresentation dateFrom = new DateRepresentation(this.checkinDay, this.checkinMonth, this.checkinYear);
+          dateFrom.setTime(16, 0);
+          DateRepresentation dateUntil = new DateRepresentation(this.checkoutDay, this.checkoutMonth, this.checkoutYear);
+          dateUntil.setTime(12, 0);
+          Loxone.setValidDate("" + this.code, newUserUUID, dateFrom, dateUntil);
+          String newAccessCode = generateAccessCode();
+          System.out.println("set access code to " + newAccessCode);
+          Loxone.updateUserAccessCode(newUserUUID, newAccessCode);
+          System.out.println("Send code by email");
+          Table firms = Data.db.getTable(Consts.tbHotels);
+          TableElement firm = firms.at(0);
+          String email = firm.getValue(4, 1).toString();
+          String smtp = firm.getValue(15, 1).toString();
+          String smtpAuthorization = firm.getValue(16, 1).toString();
+          String emailTo = payer.getValue(11, 1).toString();
+          String text = "Your access code: " + newAccessCode;
+          if (newAccessCode.length() == 8 && smtp.length() != 0 && smtpAuthorization.length() != 0 && email.length() != 0 && emailTo.length() != 0)
+            Mail.sendMail(smtp, email, smtpAuthorization, email, emailTo, "New access code", text);
+
         }
         catch (Exception e)
         {
@@ -733,12 +755,11 @@ public class Stay implements TableElement
     return "";
   }
 
-  private String getLoxoneUserName()
+  private static String generateAccessCode()
   {
-    return this.getCode() + "_"
-        + this.room.getValue(2, 1) + "_"
-        + this.payer.getValue(1, 1) + "_"
-        + this.payer.getValue(2, 1);
+    Random rnd = new Random();
+    int number = 10000000 + rnd.nextInt(89999999);
+    return String.valueOf(number);
   }
 
   public String wasRemoved(int howToRead, TableElement parentElement, String currentUser, DateRepresentation date)
