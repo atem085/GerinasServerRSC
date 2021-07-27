@@ -722,8 +722,8 @@ public class Stay implements TableElement
           System.out.println("Create user in Loxone");
           String newUserUUID = Loxone.createUser("" + this.getCode());
           Table tbStay = Data.db.getTable(Consts.tbStay);
-          tbStay.setValueAt(newUserUUID, this.getCode(), 45, "en", "", date);
           System.out.println("Update userId in Stay");
+          tbStay.setValueAt(newUserUUID, this.getCode(), 45, "en", "", date);
           if (tbStay.lastOperationResult)
           {
             Data.version++;
@@ -742,6 +742,19 @@ public class Stay implements TableElement
           String newAccessCode = generateAccessCode();
           System.out.println("set access code to " + newAccessCode);
           Loxone.updateUserAccessCode(newUserUUID, newAccessCode);
+          while (!Data.canBeRunning)
+          {
+            Thread.sleep(100);
+          }
+          System.out.println("Update access code in Stay");
+          tbStay.setValueAt(newAccessCode, this.getCode(), 46, "en", "", date);
+          if (tbStay.lastOperationResult)
+          {
+            Data.version++;
+            Command command = new Command9(Consts.tbStay, this.getCode(), 46, newAccessCode, "", date, Data.version);
+            System.out.println("Send command to update");
+            Data.commander.announce(command, "", "", "en", false, tbStay, null, null, Consts.tbStay);
+          }
           System.out.println("Send code by email");
           Table firms = Data.db.getTable(Consts.tbHotels);
           TableElement firm = firms.at(0);
