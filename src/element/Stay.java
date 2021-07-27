@@ -31,7 +31,8 @@ public class Stay implements TableElement
   protected long onlineBookingNo;
   protected char[] color = new char[0];
   protected char[] log = new char[0];
-  protected char[] userId = new char[0];
+  protected char[] userUUID = new char[0];
+  protected char[] accessCode = new char[0];
 
   //new instance
   public Stay(String checkinDate, String checkoutDate, long roomCode, long payerCode, long guestCode, int guestAmount, boolean breakfast, String note, double price, long bookingCode, long paymentCode, String color)
@@ -172,7 +173,9 @@ public class Stay implements TableElement
       case 43: return new String(this.color);
       case 44: return new String(this.log);
       case 45:
-        return new String(this.userId);
+        return new String(this.userUUID);
+      case 46:
+        return new String(this.accessCode);
       default: return new Long(this.code);
     }
   }
@@ -443,7 +446,11 @@ public class Stay implements TableElement
           this.log = (currentLog + Consts.clStay("de")[column] + " bearbeitet [" + this.getValue(column, 1).toString() + "]\n").toCharArray();
           break;
         case 45:
-          this.userId = value.toString().toCharArray();
+          this.userUUID = value.toString().toCharArray();
+          this.log = (currentLog + Consts.clStay("de")[column] + " bearbeitet [" + this.getValue(column, 1).toString() + "]\n").toCharArray();
+          break;
+        case 46:
+          this.accessCode = value.toString().toCharArray();
           this.log = (currentLog + Consts.clStay("de")[column] + " bearbeitet [" + this.getValue(column, 1).toString() + "]\n").toCharArray();
           break;
       }
@@ -454,7 +461,7 @@ public class Stay implements TableElement
   public String toString(int howToRead)
   {
     String s = "";
-    for(int i = 0; i < 46; i++)
+    for(int i = 0; i < 47; i++)
       s += this.getValue(i, howToRead) + "\t";
     return s;
   }
@@ -560,6 +567,7 @@ public class Stay implements TableElement
         case 38:
         case 43:
         case 45:
+        case 46:
           return true;
         default:
           return false;
@@ -652,7 +660,8 @@ public class Stay implements TableElement
       out.writeLong(this.onlineBookingNo);
       out.writeUTF(new String(this.color));
       out.writeUTF(new String(this.log));
-      out.writeUTF(new String(this.userId));
+      out.writeUTF(new String(this.userUUID));
+      out.writeUTF(new String(this.accessCode));
   }
 
   public TableElement duplicate()
@@ -670,7 +679,8 @@ public class Stay implements TableElement
     st.guest3 = this.guest3;
     st.combine = this.combine;
     st.color = this.color.clone();
-    st.userId = this.userId.clone();
+    st.userUUID = this.userUUID.clone();
+    st.accessCode = this.accessCode.clone();
 //    st.invoiceNo2 = this.invoiceNo2;
 //    st.invoiceNo3 = this.invoiceNo3;
     return st;
@@ -768,12 +778,12 @@ public class Stay implements TableElement
     {
       Data.db.getTable(Consts.tbDraftBooking).addTableElementSimple(this);
       this.log = "".toCharArray();
-      if (this.userId.length > 0)
+      if (this.userUUID.length > 0)
         new Thread(() -> {
           try
           {
             System.out.println("Delete user from Loxone");
-            Loxone.deleteUser(String.valueOf(this.userId));
+            Loxone.deleteUser(String.valueOf(this.userUUID));
           }
           catch (Exception e)
           {

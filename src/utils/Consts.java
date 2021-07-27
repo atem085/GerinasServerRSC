@@ -419,7 +419,7 @@ public class Consts
 
   public static String[] clStay(String language)
   {
-    String[] s = new String[46];
+    String[] s = new String[47];
     if (language.equals("de"))
     {
       s[0] = "Anreisedatum";
@@ -467,7 +467,8 @@ public class Consts
       s[42] = "Online Buchungs-Nr.";
       s[43] = "Farbe";
       s[44] = "Log";
-      s[45] = "Benutzer ID";
+      s[45] = "Benutzer UUID";
+      s[46] = "Zugangscode";
     }
     else if (language.equals("en"))
     {
@@ -516,7 +517,8 @@ public class Consts
       s[42] = "Online booking no.";
       s[43] = "Colour";
       s[44] = "Log";
-      s[45] = "User ID";
+      s[45] = "User UUID";
+      s[46] = "Access code";
     }
     else
     {
@@ -565,7 +567,8 @@ public class Consts
       s[42] = "№ онлайн брони";
       s[43] = "Цвет";
       s[44] = "Log";
-      s[45] = "ID пользователя";
+      s[45] = "UUID пользователя";
+      s[46] = "Код доступа";
     }
     return s;
   }
