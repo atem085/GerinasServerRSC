@@ -721,7 +721,7 @@ public class Commander
             OutgoingChannel ch = (OutgoingChannel) Data.outgoingChannels.get(i);
             try
             {
-              command.write(null, ch, true);
+              command.write(null, ch.outgoingOut, true);
               Data.cat.outgoingChannels.add(ch);
               Data.cat.commands.add(command);
 //              Data.cat.users.add(ch.getUser());
