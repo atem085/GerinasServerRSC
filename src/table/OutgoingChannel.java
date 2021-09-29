@@ -104,37 +104,37 @@ public class OutgoingChannel// extends Thread
     this.outgoingSocket.close();
   }
 
-  public synchronized void writeInt(int n) throws IOException
+  public /*synchronized*/ void writeInt(int n) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeInt(n);
   }
 
-  public synchronized void writeUTF(String s) throws IOException
+  public /*synchronized*/ void writeUTF(String s) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeUTF(s);
   }
 
-  public synchronized void writeBoolean(boolean b) throws IOException
+  public /*synchronized*/ void writeBoolean(boolean b) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeBoolean(b);
   }
 
-  public synchronized void writeObject(Object o) throws IOException
+  public /*synchronized*/ void writeObject(Object o) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeObject(o);
   }
 
-  public synchronized void writeDouble(double d) throws IOException
+  public /*synchronized*/ void writeDouble(double d) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeDouble(d);
   }
 
-  public synchronized void writeLong(long n) throws IOException
+  public /*synchronized*/ void writeLong(long n) throws IOException
   {
 //    this.outgoingOut.writeBoolean(true);
     this.outgoingOut.writeLong(n);
@@ -150,7 +150,7 @@ public class OutgoingChannel// extends Thread
     this.outgoingOut.flush();
   }
 */
-  public synchronized boolean readBoolean() throws IOException
+  public /*synchronized*/ boolean readBoolean() throws IOException
   {
 /*    if(this.readNow)
     {
@@ -188,7 +188,7 @@ public class OutgoingChannel// extends Thread
     }
   }
 */
-  public synchronized void flush() throws IOException
+  public /*synchronized*/ void flush() throws IOException
   {
     this.outgoingOut.flush();
   }
