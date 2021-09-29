@@ -170,40 +170,51 @@ public class Table extends ArrayList implements Comparable
 
   public String executeOperation(Object[] parameters, long selectedCode, int selectedColumn, int operationIndex, String language, String currentUser, DateRepresentation date) throws Exception
   {
-    TableElement te = this.at(this.findCode(selectedCode));
-    String message = this.example.executeOperation(this.howToRead, operationIndex, selectedCode, selectedColumn, parameters, this, language, currentUser, date);
-    if(te != null && selectedCode != te.getCode().longValue())
-      this.fixParentTablesInclusive(te);
-    int maxHowToRead = this.example.getMaxHowToRead();
-    boolean add = false;
-    if(te != null)
-      for (int j = 1; j <= maxHowToRead; j++)
-      {
-        if (te.getParentElement(j) == null && te.getParentTable(j) == null)
-          continue;
-        if (te.getParentTable(j) == null)
+    String message = "";
+    try
+    {
+      TableElement te = this.at(this.findCode(selectedCode));
+      message = this.example.executeOperation(this.howToRead, operationIndex, selectedCode, selectedColumn, parameters, this, language, currentUser, date);
+      if(te != null && selectedCode != te.getCode().longValue())
+        this.fixParentTablesInclusive(te);
+      int maxHowToRead = this.example.getMaxHowToRead();
+      boolean add = false;
+      if(te != null)
+        for (int j = 1; j <= maxHowToRead; j++)
         {
-          TableElement tet = te.getParentElement(j);
-          for (int k = 0; tet.getSubtable(k) != null; k++)
+          if (te.getParentElement(j) == null && te.getParentTable(j) == null)
+            continue;
+          if (te.getParentTable(j) == null)
           {
-            if (tet.getSubtable(k).getExample().getClass().equals(this.example.
-                getClass()))
+            TableElement tet = te.getParentElement(j);
+            for (int k = 0; tet.getSubtable(k) != null; k++)
             {
-              if (add)
-                tet.getSubtable(k).removeDuplicates(te);
-              else
-                add = tet.getSubtable(k).removeDuplicatesAddingThem(te);
+              if (tet.getSubtable(k).getExample().getClass().equals(this.example.
+                  getClass()))
+              {
+                if (add)
+                  tet.getSubtable(k).removeDuplicates(te);
+                else
+                  add = tet.getSubtable(k).removeDuplicatesAddingThem(te);
+              }
             }
           }
-        }
-        else
-        {
-          if (add)
-            te.getParentTable(j).removeDuplicates(te);
           else
-            add = te.getParentTable(j).removeDuplicatesAddingThem(te);
+          {
+            if (add)
+              te.getParentTable(j).removeDuplicates(te);
+            else
+              add = te.getParentTable(j).removeDuplicatesAddingThem(te);
+          }
         }
-      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      this.lastOperationResult = false;
+      return e.toString();
+    }
+    this.lastOperationResult = true;
     return message;
   }
 
