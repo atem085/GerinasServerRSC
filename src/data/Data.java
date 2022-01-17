@@ -143,7 +143,7 @@ public class Data
 
   private static void setLicence()
   {
-    versionID = "igdthotelhs4";
+    versionID = "igdthotelhs1";
     licencedTo = "Hotel38";
     licenceDestination = Consts.tbCustomers;
     trial = false;
